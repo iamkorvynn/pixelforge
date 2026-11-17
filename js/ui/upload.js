@@ -8,7 +8,7 @@ export function setupUpload({ fileInput, dropZone, onLoad, onError }) {
     const reader = new FileReader();
     reader.onload = () => {
       const img = new Image();
-      img.onload = () => onLoad(img, file.name);
+      img.onload = () => onLoad(img, file.name, file.size);
       img.onerror = () => onError('Could not read that image file.');
       img.src = reader.result;
     };
