@@ -57,7 +57,7 @@ try {
     check(r.status === 200 && r.headers.get('content-type') === 'image/png', `sample serves: ${s}`);
   }
 
-  const recipes = await readdir(path.join(root, 'recipes'));
+  const recipes = (await readdir(path.join(root, 'recipes'))).filter((f) => f.endsWith('.json'));
   for (const r of recipes) {
     const res = await get(`/recipes/${r}`);
     let parsed = null;
