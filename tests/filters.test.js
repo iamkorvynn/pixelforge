@@ -44,11 +44,11 @@ test('invert of a buffer flips every channel', () => {
 });
 
 test('vignette leaves the centre untouched and darkens corners', () => {
-  const buf = makeBuffer(9, 9, [200, 200, 200, 255]);
+  const buf = makeBuffer(10, 10, [200, 200, 200, 255]);
   const out = vignette(buf, 80);
-  assert.equal(getPixel(out, 4, 4)[0], 200);
+  assert.equal(getPixel(out, 5, 5)[0], 200);
   assert.ok(getPixel(out, 0, 0)[0] < 200);
-  assert.ok(getPixel(out, 8, 8)[0] < 200);
+  assert.ok(getPixel(out, 9, 9)[0] < 200);
 });
 
 test('vignette at strength 0 changes nothing', () => {
