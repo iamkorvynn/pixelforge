@@ -124,3 +124,9 @@ test('grain is deterministic and bounded by its strength', () => {
   const none = grain(buf, 0);
   assert.deepEqual([...none.data], [...buf.data]);
 });
+
+test('clarity at strength 0 is a no-op and at 100 equals sharpen', () => {
+  const buf = makeBuffer(5, 5, [100, 100, 100, 255]);
+  buf.data[(2 * 5 + 2) * 4] = 200;
+  assert.deepEqual([...clarity(buf, 0).data], [...buf.data]);
+});
