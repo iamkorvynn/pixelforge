@@ -32,9 +32,9 @@ test('every preset uses only known filters', () => {
   }
 });
 
-test('the filter registry lists all 14 hand-written filters', () => {
+test('the filter registry lists all 19 hand-written filters', () => {
   const filters = listFilters();
-  assert.equal(filters.length, 14);
+  assert.equal(filters.length, 19);
   assert.ok(filters.some((f) => f.id === 'grayscale'));
   assert.ok(filters.some((f) => f.id === 'sharpen'));
   assert.ok(filters.some((f) => f.id === 'vignette'));
