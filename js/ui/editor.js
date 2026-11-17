@@ -246,11 +246,17 @@ export class Editor {
 
   zoomPercent() { return Math.round(this.zoom * 100); }
 
-  // Export the current edited image as a data URL (full resolution).
-  exportDataUrl(state, format, quality) {
+  // Export the current edited image as a data URL (full resolution, or
+  // scaled by `scale`: 0.5 = half size, 2 = double size).
+  exportDataUrl(state, format, quality, scale = 1) {
     const edited = runPipeline(this.workBuffer, state.adjustments, state.filters);
     this._putBuffer(this.editCanvas, edited);
     const mime = format === 'png' ? 'image/png' : format === 'jpeg' ? 'image/jpeg' : 'image/webp';
-    return this.editCanvas.toDataURL(mime, quality);
+    if (scale === 1) return this.editCanvas.toDataURL(mime, quality);
+    const scaled = document.createElement('canvas');
+    scaled.width = Math.max(1, Math.round(this.editCanvas.width * scale));
+    scaled.height = Math.max(1, Math.round(this.editCanvas.height * scale));
+    scaled.getContext('2d').drawImage(this.editCanvas, 0, 0, scaled.width, scaled.height);
+    return scaled.toDataURL(mime, quality);
   }
 }
