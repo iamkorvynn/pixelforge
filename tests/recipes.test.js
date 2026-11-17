@@ -68,3 +68,27 @@ test('createRecipe truncates over-long names', () => {
   const recipe = createRecipe('x'.repeat(200), {});
   assert.ok(recipe.name.length <= 80);
 });
+
+test('recipeFromUrl parses a recipe from a query string', () => {
+  const recipe = sample();
+  const params = new URLSearchParams({ recipe: serializeRecipe(recipe) });
+  const back = recipeFromUrl(`?${params.toString()}`);
+  assert.equal(back.name, 'Golden Hour');
+  assert.equal(back.adjustments.warmth, 30);
+});
+
+test('recipeFromUrl returns null with no recipe param', () => {
+  assert.equal(recipeFromUrl('?foo=bar'), null);
+  assert.equal(recipeFromUrl(''), null);
+});
+
+test('recipeFromUrl throws on a malformed recipe in the URL', () => {
+  assert.throws(() => recipeFromUrl('?recipe=%7Bbad%20json'), /not valid JSON/);
+});
+
+test('recipeToUrl round-trips through recipeFromUrl', () => {
+  const recipe = sample();
+  const url = recipeToUrl('https://example.com/', recipe);
+  const back = recipeFromUrl(new URL(url).search);
+  assert.equal(back.name, 'Golden Hour');
+});
