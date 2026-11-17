@@ -7,11 +7,13 @@ export const EXPORT_FORMATS = {
   webp: { label: 'WebP', mime: 'image/webp', extension: 'webp' },
 };
 
-export function validateExportOptions({ format = 'png', quality = 0.92 } = {}) {
+export function validateExportOptions({ format = 'png', quality = 0.92, scale = 1 } = {}) {
   if (!EXPORT_FORMATS[format]) throw new Error(`Unsupported export format: ${format}`);
   const q = Number(quality);
   if (!Number.isFinite(q) || q < 0.1 || q > 1) throw new Error('Export quality must be between 0.1 and 1.');
-  return { format, quality: q };
+  const s = Number(scale);
+  if (!Number.isFinite(s) || s < 0.1 || s > 2) throw new Error('Export scale must be between 0.1 and 2.');
+  return { format, quality: q, scale: s };
 }
 
 // Quality is ignored for PNG (lossless) — canvas.toDataURL handles that.
