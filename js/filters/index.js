@@ -14,10 +14,16 @@ import * as cool from './cool.js';
 import * as warm from './warm.js';
 import * as posterize from './posterize.js';
 import * as outline from './outline.js';
+import * as solarize from './solarize.js';
+import * as threshold from './threshold.js';
+import * as emboss from './emboss.js';
+import * as grain from './grain.js';
+import * as clarity from './clarity.js';
 
 export const FILTERS = [
   grayscale, sepia, vintage, invert, noir, fade, duotone,
   warm, cool, vignette, blur, sharpen, posterize, outline,
+  solarize, threshold, emboss, grain, clarity,
 ];
 
 export const FILTER_MAP = Object.fromEntries(FILTERS.map((f) => [f.id, f]));
