@@ -103,3 +103,12 @@ test('threshold outputs only pure black or pure white', () => {
   assert.deepEqual(getPixel(out, 0, 0), [255, 255, 255, 255]);
   assert.deepEqual(getPixel(out, 1, 0), [0, 0, 0, 255]);
 });
+
+test('emboss of a uniform image is flat mid-grey', () => {
+  const buf = makeBuffer(5, 5, [100, 100, 100, 255]);
+  const out = emboss(buf);
+  const [r, g, b] = getPixel(out, 2, 2);
+  assert.equal(r, g);
+  assert.equal(g, b);
+  assert.ok(Math.abs(r - 128) <= 2);
+});
