@@ -60,6 +60,16 @@ export class Editor {
     this.workBuffer = buf;
   }
 
+  // Make the current working buffer the new source (used when a crop is
+  // applied: cropping is destructive, so later rebuilds start from it).
+  replaceSourceWithWorking() {
+    if (!this.workBuffer) return;
+    this.sourceBuffer = cloneBuffer(this.workBuffer);
+    this.sourceCanvas.width = this.workBuffer.width;
+    this.sourceCanvas.height = this.workBuffer.height;
+    this.sourceCanvas.getContext('2d').drawImage(this.workCanvas, 0, 0);
+  }
+
   // Fit the image into the canvas element (CSS pixels).
   fitToView() {
     if (!this.workBuffer) return;
