@@ -51,8 +51,8 @@ export const SHARPEN_STRONG_3 = [-1, -1, -1, -1, 9, -1, -1, -1, -1];
 // Edge detection (Laplacian) — used by the "Outline" fun filter.
 export const EDGE_3 = [-1, -1, -1, -1, 8, -1, -1, -1, -1];
 
-// Emboss.
-export const EMBOSS_3 = [-2, -1, 0, -1, 1, 1, 0, 1, 2];
+// Emboss (zero-sum, so a flat image embosses to flat mid-grey).
+export const EMBOSS_3 = [-1, -1, 0, -1, 0, 1, 0, 1, 1];
 
 export function blur(buf, strength = 1) {
   // strength 1..5: repeat the 3x3 gaussian that many times.
