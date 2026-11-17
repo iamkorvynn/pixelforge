@@ -28,6 +28,22 @@ export const FILTERS = [
 
 export const FILTER_MAP = Object.fromEntries(FILTERS.map((f) => [f.id, f]));
 
+// Filters that take a strength, and the slider range for tuning it live.
+export const STRENGTH_RANGES = {
+  blur: { min: 1, max: 5, default: 2 },
+  sharpen: { min: 1, max: 2, default: 1 },
+  vignette: { min: 0, max: 100, default: 50 },
+  posterize: { min: 2, max: 8, default: 4 },
+  threshold: { min: 0, max: 255, default: 128 },
+  solarize: { min: 0, max: 255, default: 128 },
+  grain: { min: 0, max: 100, default: 20 },
+  clarity: { min: 0, max: 100, default: 50 },
+};
+
+export function defaultStrength(id) {
+  return STRENGTH_RANGES[id]?.default;
+}
+
 export function getFilter(id) {
   return FILTER_MAP[id] || null;
 }
