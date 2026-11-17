@@ -1,0 +1,64 @@
+/* PixelForge dialogs + toast */
+dialog {
+  background: var(--bg-panel);
+  color: var(--text);
+  border: 1px solid var(--border-strong);
+  border-radius: var(--radius);
+  padding: 0;
+  width: min(420px, 92vw);
+  box-shadow: 0 20px 60px rgba(0, 0, 0, 0.6);
+}
+dialog::backdrop { background: rgba(0, 0, 0, 0.6); }
+.dialog-body { padding: 20px; }
+.dialog-body h2 { margin: 0 0 4px; font-size: 18px; }
+.dialog-body p { margin: 0 0 16px; color: var(--text-dim); font-size: 13px; }
+.dialog-body .field { margin-bottom: 14px; }
+.dialog-body .field label { display: block; margin-bottom: 5px; color: var(--text-dim); font-size: 13px; }
+.dialog-body .field select,
+.dialog-body .field input[type="text"] {
+  width: 100%;
+  background: var(--bg-panel-2);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-sm);
+  padding: 8px 10px;
+}
+.dialog-body .field.muted { opacity: 0.5; }
+.dialog-actions { display: flex; justify-content: flex-end; gap: 8px; margin-top: 18px; }
+.dialog-error { color: var(--accent); font-size: 13px; min-height: 18px; margin: 4px 0 0; }
+
+#export-quality { width: 100%; }
+#export-quality-value { font-variant-numeric: tabular-nums; }
+
+.shortcut-table { width: 100%; border-collapse: collapse; font-size: 13px; }
+.shortcut-table td { padding: 6px 4px; border-bottom: 1px solid var(--border); }
+.shortcut-table td:first-child { color: var(--text-dim); white-space: nowrap; padding-right: 14px; }
+.shortcut-table kbd,
+.kbd {
+  font-family: ui-monospace, "SF Mono", Menlo, monospace;
+  font-size: 11px;
+  background: var(--bg-panel-2);
+  border: 1px solid var(--border-strong);
+  border-radius: 4px;
+  padding: 1px 6px;
+}
+
+.pf-toast {
+  position: fixed;
+  left: 50%;
+  bottom: 46px;
+  transform: translate(-50%, 20px);
+  background: var(--bg-panel-2);
+  border: 1px solid var(--border-strong);
+  color: var(--text);
+  padding: 9px 16px;
+  border-radius: 24px;
+  font-size: 13px;
+  box-shadow: 0 8px 30px rgba(0, 0, 0, 0.5);
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.18s ease, transform 0.18s ease;
+  z-index: 100;
+  max-width: 80vw;
+  text-align: center;
+}
+.pf-toast.show { opacity: 1; transform: translate(-50%, 0); }
