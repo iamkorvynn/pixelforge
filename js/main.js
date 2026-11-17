@@ -415,6 +415,11 @@ const SAMPLES = [
   { url: 'samples/forest-mist.png', name: 'Forest Mist' },
   { url: 'samples/city-neon.png', name: 'City Neon' },
   { url: 'samples/desert-dunes.png', name: 'Desert Dunes' },
+  { url: 'samples/aurora.png', name: 'Aurora' },
+  { url: 'samples/autumn-leaves.png', name: 'Autumn Leaves' },
+  { url: 'samples/lavender-field.png', name: 'Lavender Field' },
+  { url: 'samples/winter-peaks.png', name: 'Winter Peaks' },
+  { url: 'samples/misty-lake.png', name: 'Misty Lake' },
 ];
 const sampleList = $('sample-list');
 for (const sample of SAMPLES) {
