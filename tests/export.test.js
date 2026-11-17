@@ -7,14 +7,17 @@ test('all three formats are known', () => {
 });
 
 test('validateExportOptions accepts valid options', () => {
-  assert.deepEqual(validateExportOptions({ format: 'jpeg', quality: 0.8 }), { format: 'jpeg', quality: 0.8 });
-  assert.deepEqual(validateExportOptions({}), { format: 'png', quality: 0.92 });
+  assert.deepEqual(validateExportOptions({ format: 'jpeg', quality: 0.8 }), { format: 'jpeg', quality: 0.8, scale: 1 });
+  assert.deepEqual(validateExportOptions({}), { format: 'png', quality: 0.92, scale: 1 });
+  assert.deepEqual(validateExportOptions({ format: 'png', scale: 0.5 }), { format: 'png', quality: 0.92, scale: 0.5 });
 });
 
 test('validateExportOptions rejects unknown formats and bad quality', () => {
   assert.throws(() => validateExportOptions({ format: 'tiff' }), /Unsupported export format/);
   assert.throws(() => validateExportOptions({ format: 'png', quality: 0 }), /quality/);
   assert.throws(() => validateExportOptions({ format: 'png', quality: 1.5 }), /quality/);
+  assert.throws(() => validateExportOptions({ format: 'png', scale: 0 }), /scale/);
+  assert.throws(() => validateExportOptions({ format: 'png', scale: 3 }), /scale/);
 });
 
 test('exportMime returns the right MIME type', () => {
