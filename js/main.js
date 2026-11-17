@@ -374,8 +374,8 @@ for (const sample of SAMPLES) {
 }
 
 // --- Export ---------------------------------------------------------------
-const exportDialog = buildExportDialog($('export-dialog'), ({ format, quality, filename }) => {
-  const dataUrl = editor.exportDataUrl(state, format, quality);
+const exportDialog = buildExportDialog($('export-dialog'), ({ format, quality, scale, filename }) => {
+  const dataUrl = editor.exportDataUrl(state, format, quality, scale);
   const a = document.createElement('a');
   a.href = dataUrl;
   a.download = filename;
