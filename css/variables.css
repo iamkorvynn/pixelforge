@@ -1,0 +1,21 @@
+/* PixelForge design tokens */
+:root {
+  --bg: #0f0f13;
+  --bg-panel: #17171d;
+  --bg-panel-2: #1e1e26;
+  --bg-hover: #26262f;
+  --border: #2a2a34;
+  --border-strong: #3a3a46;
+  --text: #ececf1;
+  --text-dim: #a5a5b3;
+  --text-faint: #6d6d7c;
+  --accent: #ff4d2e;
+  --accent-hover: #ff6a4d;
+  --accent-soft: rgba(255, 77, 46, 0.14);
+  --success: #34c77b;
+  --radius: 10px;
+  --radius-sm: 7px;
+  --toolbar-h: 52px;
+  --sidebar-w: 300px;
+  --status-h: 30px;
+}
