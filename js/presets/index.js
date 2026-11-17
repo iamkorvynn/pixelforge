@@ -4,6 +4,8 @@ import { PRESETS as film } from './film.js';
 import { PRESETS as mono } from './mono.js';
 import { PRESETS as vivid } from './vivid.js';
 import { PRESETS as portrait } from './portrait.js';
+import { PRESETS as seasonal } from './seasonal.js';
+import { PRESETS as street } from './street.js';
 
 export const PRESET_GROUPS = [
   { id: 'classic', label: 'Classic', presets: classic },
@@ -11,6 +13,8 @@ export const PRESET_GROUPS = [
   { id: 'mono', label: 'Mono', presets: mono },
   { id: 'vivid', label: 'Vivid', presets: vivid },
   { id: 'portrait', label: 'Portrait', presets: portrait },
+  { id: 'seasonal', label: 'Seasonal', presets: seasonal },
+  { id: 'street', label: 'Street', presets: street },
 ];
 
 export const ALL_PRESETS = PRESET_GROUPS.flatMap((g) => g.presets);
