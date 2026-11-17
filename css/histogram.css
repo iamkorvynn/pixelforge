@@ -1,0 +1,15 @@
+/* PixelForge histogram */
+#histogram-canvas {
+  width: 100%;
+  height: 64px;
+  background: var(--bg-panel-2);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-sm);
+  display: block;
+}
+#histogram-label {
+  color: var(--text-faint);
+  font-size: 11px;
+  margin: 6px 0 0;
+  font-variant-numeric: tabular-nums;
+}
