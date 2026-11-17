@@ -1,0 +1,161 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>PixelForge — Photo Editor</title>
+<meta name="description" content="PixelForge is a photo editor built from scratch in the browser: adjustments, hand-written filters, presets, crop, and shareable filter Recipes.">
+<link rel="stylesheet" href="css/main.css">
+<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><rect width='100' height='100' rx='20' fill='%23ff4d2e'/><text x='50' y='68' font-size='52' text-anchor='middle' fill='white' font-family='sans-serif' font-weight='bold'>P</text></svg>">
+</head>
+<body>
+<div id="app">
+
+  <!-- Toolbar -->
+  <header id="toolbar">
+    <div class="brand"><span class="brand-mark">◈</span>Pixel<em>Forge</em></div>
+    <div class="toolbar-sep"></div>
+    <button class="tool-btn" id="btn-open" title="Open an image (Ctrl+O)">📂 <span class="btn-label">Open</span></button>
+    <button class="tool-btn" id="btn-undo" title="Undo (Ctrl+Z)" disabled>↩ <span class="btn-label">Undo</span></button>
+    <button class="tool-btn" id="btn-redo" title="Redo (Ctrl+Shift+Z)" disabled>↪ <span class="btn-label">Redo</span></button>
+    <div class="toolbar-sep"></div>
+    <button class="tool-btn" id="btn-rotate" title="Rotate 90° clockwise (R)">⟳ <span class="btn-label">Rotate</span></button>
+    <button class="tool-btn" id="btn-flip-h" title="Flip horizontal (H)">⇋ <span class="btn-label">Flip H</span></button>
+    <button class="tool-btn" id="btn-flip-v" title="Flip vertical (V)">⇅ <span class="btn-label">Flip V</span></button>
+    <button class="tool-btn" id="btn-crop" title="Crop mode (C)" aria-pressed="false">✂ <span class="btn-label">Crop</span></button>
+    <div class="toolbar-sep"></div>
+    <button class="tool-btn" id="btn-zoom-out" title="Zoom out (-)">−</button>
+    <span id="zoom-label" class="status-item" title="Zoom level">100%</span>
+    <button class="tool-btn" id="btn-zoom-in" title="Zoom in (+)">+</button>
+    <button class="tool-btn" id="btn-fit" title="Fit image to view (F)">⤢ <span class="btn-label">Fit</span></button>
+    <button class="tool-btn" id="btn-compare" title="Before/after split slider (A)" aria-pressed="false">◐ <span class="btn-label">Compare</span></button>
+    <div class="toolbar-spacer"></div>
+    <button class="tool-btn" id="btn-shortcuts" title="Keyboard shortcuts (?)">⌨ <span class="btn-label">Shortcuts</span></button>
+    <button class="tool-btn" id="btn-reset" title="Reset all edits (Ctrl+0)">⟲ <span class="btn-label">Reset</span></button>
+    <button class="tool-btn primary" id="btn-export" title="Export image (Ctrl+S)">⬇ <span class="btn-label">Export</span></button>
+  </header>
+
+  <!-- Sidebar -->
+  <aside id="sidebar">
+    <section class="panel" aria-label="Adjustments">
+      <h2>Adjust</h2>
+      <div id="sliders"></div>
+    </section>
+
+    <section class="panel" aria-label="Filters">
+      <h2>Filters</h2>
+      <div id="filter-chips"></div>
+      <h3 style="margin-top:12px">Add a filter</h3>
+      <div id="filter-grid"></div>
+    </section>
+
+    <section class="panel" aria-label="Presets">
+      <h2>Presets</h2>
+      <div id="preset-strip"></div>
+    </section>
+
+    <section class="panel" aria-label="Recipes">
+      <h2>Recipes <span title="Save any filter combination as a named recipe, share it as text, and import recipes others share with you.">ⓘ</span></h2>
+      <div class="recipe-row">
+        <input type="text" id="recipe-name" placeholder="Name this look…" maxlength="80" aria-label="Recipe name">
+        <button class="btn accent" id="recipe-save" type="button">Save</button>
+      </div>
+      <div class="recipe-row">
+        <button class="btn" id="recipe-copy" type="button">Copy current look</button>
+        <button class="btn" id="recipe-download" type="button">Download .json</button>
+      </div>
+      <textarea id="recipe-import-text" placeholder="Paste a recipe JSON here to import it…" aria-label="Paste recipe JSON"></textarea>
+      <button class="btn ghost" id="recipe-import" type="button">Import pasted recipe</button>
+      <ul id="recipe-list"></ul>
+      <p class="recipe-hint">Recipes are plain JSON — copy one into any chat and anyone can paste it back in.</p>
+    </section>
+
+    <section class="panel" aria-label="Sample photos">
+      <h2>Sample photos</h2>
+      <p class="recipe-hint" style="margin:0 0 8px">Generated abstract art, made for this app — no copyrighted photos.</p>
+      <div id="sample-list"></div>
+    </section>
+  </aside>
+
+  <!-- Canvas -->
+  <main id="editor-wrap">
+    <canvas id="editor-canvas" aria-label="Photo editor canvas"></canvas>
+    <div id="empty-state" class="hidden">
+      <h2>Forge your photo</h2>
+      <p>Open an image, or pick a sample photo below. Drag &amp; drop a file anywhere, or paste one from your clipboard.</p>
+      <button class="btn accent" id="btn-open-empty" type="button">Open an image</button>
+    </div>
+    <div id="crop-bar" class="hidden">
+      <label for="crop-aspect">Aspect</label>
+      <select id="crop-aspect"></select>
+      <span style="color:var(--text-dim);font-size:13px">Drag the handles to crop</span>
+      <button class="btn accent" id="crop-apply" type="button">Apply crop</button>
+      <button class="btn" id="crop-cancel" type="button">Cancel</button>
+    </div>
+  </main>
+
+  <!-- Status bar -->
+  <footer id="statusbar">
+    <span id="status-pipeline">No image loaded</span>
+    <span class="status-item">Image: <b id="status-image">—</b></span>
+    <span class="status-item">Zoom: <b id="status-zoom">100%</b></span>
+  </footer>
+</div>
+
+<input type="file" id="file-input" accept="image/*" class="sr-only" aria-label="Choose an image file">
+
+<!-- Export dialog -->
+<dialog id="export-dialog">
+  <form method="dialog" class="dialog-body">
+    <h2>Export image</h2>
+    <p>Exports the edited image at full resolution.</p>
+    <div class="field">
+      <label for="export-format">Format</label>
+      <select id="export-format"></select>
+    </div>
+    <div class="field">
+      <label for="export-quality">Quality — <span id="export-quality-value">92%</span></label>
+      <input type="range" id="export-quality" min="0.1" max="1" step="0.01" value="0.92">
+    </div>
+    <div class="field">
+      <label for="export-name">File name</label>
+      <input type="text" id="export-name" value="pixelforge-edit">
+    </div>
+    <p class="dialog-error" role="alert"></p>
+    <div class="dialog-actions">
+      <button class="btn" type="button" data-close>Cancel</button>
+      <button class="btn accent" type="submit">Download</button>
+    </div>
+  </form>
+</dialog>
+
+<!-- Shortcuts dialog -->
+<dialog id="shortcuts-dialog">
+  <div class="dialog-body">
+    <h2>Keyboard shortcuts</h2>
+    <p>Everything in PixelForge works from the keyboard.</p>
+    <table class="shortcut-table">
+      <tr><td><span class="kbd">Ctrl/⌘ Z</span></td><td>Undo</td></tr>
+      <tr><td><span class="kbd">Ctrl/⌘ Shift Z</span> / <span class="kbd">Ctrl Y</span></td><td>Redo</td></tr>
+      <tr><td><span class="kbd">Ctrl/⌘ O</span></td><td>Open image</td></tr>
+      <tr><td><span class="kbd">Ctrl/⌘ S</span></td><td>Export image</td></tr>
+      <tr><td><span class="kbd">R</span></td><td>Rotate 90°</td></tr>
+      <tr><td><span class="kbd">H</span> / <span class="kbd">V</span></td><td>Flip horizontal / vertical</td></tr>
+      <tr><td><span class="kbd">C</span></td><td>Toggle crop mode</td></tr>
+      <tr><td><span class="kbd">A</span></td><td>Before/after split slider</td></tr>
+      <tr><td><span class="kbd">B</span> (hold)</td><td>Show the original while held</td></tr>
+      <tr><td><span class="kbd">F</span></td><td>Fit image to view</td></tr>
+      <tr><td><span class="kbd">0</span></td><td>Zoom to 100%</td></tr>
+      <tr><td><span class="kbd">+</span> / <span class="kbd">−</span></td><td>Zoom in / out</td></tr>
+      <tr><td><span class="kbd">Ctrl/⌘ 0</span></td><td>Reset all edits</td></tr>
+      <tr><td><span class="kbd">?</span></td><td>This list</td></tr>
+    </table>
+    <div class="dialog-actions">
+      <button class="btn accent" type="button" data-close>Done</button>
+    </div>
+  </div>
+</dialog>
+
+<script type="module" src="js/main.js"></script>
+</body>
+</html>
