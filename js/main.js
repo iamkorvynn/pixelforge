@@ -3,6 +3,7 @@
 import { Editor } from './ui/editor.js';
 import { toast } from './ui/toast.js';
 import { setupUpload, loadSample } from './ui/upload.js';
+import { buildTransformPanel } from './ui/transformPanel.js';
 import { buildSliders, syncSliders } from './ui/sliders.js';
 import { buildPresetStrip, markActivePreset, renderFilterChips, buildFilterGrid } from './ui/presetsPanel.js';
 import { buildRecipesPanel } from './ui/recipesPanel.js';
@@ -44,6 +45,7 @@ function afterStateChange(label) {
   editor.rebuildWorking(state);
   editor.queueRender(state);
   syncSliders(sliderInputs, state.adjustments);
+  transformPanel.sync(state.transform.angle || 0);
   renderFilterChips(filterChipsEl, state.filters, onRemoveFilter);
   updateStatus(label);
   updateToolbar();
@@ -95,6 +97,15 @@ for (const input of Object.values(sliderInputs)) {
     if (state) { history.push(state); updateToolbar(); }
   });
 }
+
+// --- Straighten -----------------------------------------------------------
+const transformPanel = buildTransformPanel($('transform-panel'), (angle, committed) => {
+  if (!state) return;
+  state = { ...state, transform: { ...state.transform, angle } };
+  editor.rebuildWorking(state);
+  editor.queueRender(state);
+  if (committed) { history.push(state); updateToolbar(); updateStatus(); }
+});
 
 // --- Presets & filters ----------------------------------------------------
 const presetStripEl = $('preset-strip');
