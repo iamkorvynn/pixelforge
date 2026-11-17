@@ -72,3 +72,18 @@ export function parseRecipe(text) {
 export function roundTrip(recipe) {
   return parseRecipe(serializeRecipe(recipe));
 }
+
+// Deep-link support: ?recipe=<urlencoded recipe JSON> loads a shared look
+// on start. Returns the parsed recipe, or null when no recipe is present.
+export function recipeFromUrl(search) {
+  const params = new URLSearchParams(search);
+  const raw = params.get('recipe');
+  if (!raw) return null;
+  return parseRecipe(raw);
+}
+
+// Build a shareable deep link for a recipe (same origin, no server needed).
+export function recipeToUrl(base, recipe) {
+  const params = new URLSearchParams({ recipe: serializeRecipe(recipe) });
+  return `${base}?${params.toString()}`;
+}
