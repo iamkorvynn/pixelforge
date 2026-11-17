@@ -12,12 +12,13 @@ import { buildToolbar } from './ui/toolbar.js';
 import { setupShortcuts } from './ui/shortcuts.js';
 import { buildExportDialog, buildShortcutsDialog } from './ui/dialogs.js';
 import { DEFAULT_ADJUSTMENTS } from './core/pixel.js';
-import { createState, resetAll, setAdjustment, addFilter, removeFilter, applyRecipeToState, stateToRecipeData } from './core/state.js';
+import { createState, resetAll, resetAdjustments, setAdjustment, addFilter, removeFilter, applyRecipeToState, stateToRecipeData } from './core/state.js';
 import { History } from './core/history.js';
 import { describePipeline } from './core/pipeline.js';
 import { rotateTransform, DEFAULT_TRANSFORM } from './core/transform.js';
 import { fullCrop, clampCrop, dragCrop, ASPECT_PRESETS, centredCrop } from './core/crop.js';
 import { getPreset, presetToRecipe } from './presets/index.js';
+import { defaultStrength } from './filters/index.js';
 import { parseRecipe } from './core/recipes.js';
 
 const $ = (id) => document.getElementById(id);
@@ -47,7 +48,7 @@ function afterStateChange(label) {
   editor.queueRender(state);
   syncSliders(sliderInputs, state.adjustments);
   transformPanel.sync(state.transform.angle || 0);
-  renderFilterChips(filterChipsEl, state.filters, onRemoveFilter);
+  renderFilterChips(filterChipsEl, state.filters, onRemoveFilter, onFilterStrength);
   updateStatus(label);
   updateToolbar();
 }
@@ -99,6 +100,10 @@ for (const input of Object.values(sliderInputs)) {
     if (state) { history.push(state); updateToolbar(); }
   });
 }
+$('btn-reset-adjustments').addEventListener('click', () => {
+  if (!state) return;
+  commit(resetAdjustments(state), 'Reset adjustments');
+});
 
 // --- Straighten -----------------------------------------------------------
 const transformPanel = buildTransformPanel($('transform-panel'), (angle, committed) => {
@@ -124,7 +129,7 @@ function onPickPreset(id) {
 
 function onPickFilter(id) {
   if (!state) return;
-  commit(addFilter(state, id), `Added filter`);
+  commit(addFilter(state, id, defaultStrength(id)), `Added filter`);
 }
 
 function onRemoveFilter(index) {
@@ -132,9 +137,18 @@ function onRemoveFilter(index) {
   commit(removeFilter(state, index), 'Removed filter');
 }
 
+function onFilterStrength(index, value, committed) {
+  if (!state) return;
+  const filters = state.filters.map((step, i) => (i === index ? { ...step, strength: value } : step));
+  state = { ...state, filters };
+  editor.queueRender(state);
+  updateStatus();
+  if (committed) { history.push(state); updateToolbar(); }
+}
+
 buildPresetStrip(presetStripEl, onPickPreset);
 buildFilterGrid($('filter-grid'), onPickFilter);
-renderFilterChips(filterChipsEl, [], onRemoveFilter);
+renderFilterChips(filterChipsEl, [], onRemoveFilter, onFilterStrength);
 
 // --- Recipes --------------------------------------------------------------
 const recipesPanel = buildRecipesPanel({
