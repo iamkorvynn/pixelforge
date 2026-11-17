@@ -112,3 +112,15 @@ test('emboss of a uniform image is flat mid-grey', () => {
   assert.equal(g, b);
   assert.ok(Math.abs(r - 128) <= 2);
 });
+
+test('grain is deterministic and bounded by its strength', () => {
+  const buf = makeBuffer(8, 8, [128, 128, 128, 255]);
+  const a = grain(buf, 20);
+  const b = grain(buf, 20);
+  assert.deepEqual([...a.data], [...b.data], 'same input + strength must give the same grain');
+  for (let i = 0; i < a.data.length; i += 4) {
+    assert.ok(Math.abs(a.data[i] - 128) <= 10, 'grain at strength 20 shifts a channel by at most 10');
+  }
+  const none = grain(buf, 0);
+  assert.deepEqual([...none.data], [...buf.data]);
+});
