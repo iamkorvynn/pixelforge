@@ -19,7 +19,7 @@ import { rotateTransform, DEFAULT_TRANSFORM } from './core/transform.js';
 import { fullCrop, clampCrop, dragCrop, ASPECT_PRESETS, centredCrop } from './core/crop.js';
 import { getPreset, presetToRecipe } from './presets/index.js';
 import { defaultStrength } from './filters/index.js';
-import { parseRecipe } from './core/recipes.js';
+import { parseRecipe, recipeFromUrl } from './core/recipes.js';
 
 const $ = (id) => document.getElementById(id);
 
@@ -83,6 +83,14 @@ function loadNewImage(img, name) {
   $('empty-state').classList.add('hidden');
   $('editor-wrap').classList.remove('hidden');
   toast(`Loaded ${name || 'image'} — ${editor.imageWidth} × ${editor.imageHeight}px`);
+  // Deep link: ?recipe=<json> applies a shared look once the image is in.
+  if (pendingUrlRecipe) {
+    const recipe = pendingUrlRecipe;
+    pendingUrlRecipe = null;
+    state = applyRecipeToState(state, recipe);
+    history.push(state);
+    afterStateChange(`Applied shared recipe “${recipe.name}”`);
+  }
 }
 
 // --- Sliders --------------------------------------------------------------
@@ -423,5 +431,16 @@ toolbar.setEnabled(false);
 updateStatus();
 window.addEventListener('resize', () => { if (state) editor.queueRender(state); });
 
+// Deep links: ?recipe=<urlencoded recipe JSON> applies a shared look,
+// ?sample=<name> picks a different starting sample (e.g. ?sample=city-neon).
+let pendingUrlRecipe = null;
+try {
+  pendingUrlRecipe = recipeFromUrl(location.search);
+} catch (err) {
+  toast(`Could not load the shared recipe: ${err.message}`);
+}
+const sampleParam = new URLSearchParams(location.search).get('sample');
+const startSample = SAMPLES.find((s) => s.url.includes(sampleParam || '___')) || SAMPLES[0];
+
 // Auto-load the first sample so the editor is never an empty grey box.
-loadSample(SAMPLES[0].url, SAMPLES[0].name, loadNewImage, (m) => toast(m));
+loadSample(startSample.url, startSample.name, loadNewImage, (m) => toast(m));
