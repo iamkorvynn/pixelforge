@@ -1,0 +1,23 @@
+/* PixelForge responsive tweaks */
+@media (max-width: 900px) {
+  #app {
+    grid-template-columns: 240px 1fr;
+  }
+  .tool-btn .btn-label { display: none; }
+  .tool-btn { padding: 7px 8px; }
+}
+
+@media (max-width: 640px) {
+  body { overflow: auto; }
+  #app {
+    display: flex;
+    flex-direction: column;
+    height: auto;
+    min-height: 100vh;
+  }
+  #toolbar { flex-wrap: wrap; height: auto; padding: 8px; }
+  #sidebar { order: 2; border-right: none; border-top: 1px solid var(--border); overflow: visible; }
+  #editor-wrap { order: 1; height: 60vh; min-height: 380px; }
+  #statusbar { order: 3; position: sticky; bottom: 0; }
+  #preset-strip { grid-template-columns: repeat(3, 1fr); }
+}
