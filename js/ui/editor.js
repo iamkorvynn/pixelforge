@@ -60,6 +60,12 @@ export class Editor {
     this.workBuffer = buf;
   }
 
+  // Data URL of the source image (JPEG, for session persistence).
+  sourceDataUrl() {
+    if (!this.sourceBuffer) return null;
+    return this.sourceCanvas.toDataURL('image/jpeg', 0.85);
+  }
+
   // Make the current working buffer the new source (used when a crop is
   // applied: cropping is destructive, so later rebuilds start from it).
   replaceSourceWithWorking() {
