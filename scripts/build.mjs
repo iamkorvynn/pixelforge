@@ -62,14 +62,15 @@ console.log(`Found ${samples.length} sample images.`);
 
 // 4. Recipe JSON files must parse.
 const recipeDir = path.join(root, 'recipes');
-for (const r of await readdir(recipeDir)) {
+const recipeFiles = (await readdir(recipeDir)).filter((f) => f.endsWith('.json'));
+for (const r of recipeFiles) {
   try {
     JSON.parse(await readFile(path.join(recipeDir, r), 'utf8'));
   } catch {
     fail(`invalid recipe JSON: ${r}`);
   }
 }
-console.log(`Checked ${[...await readdir(recipeDir)].length} bundled recipes.`);
+console.log(`Checked ${recipeFiles.length} bundled recipes.`);
 
 if (failures > 0) {
   console.error(`\nBuild FAILED with ${failures} problem(s).`);
