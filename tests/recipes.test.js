@@ -1,6 +1,6 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
-import { createRecipe, serializeRecipe, parseRecipe, roundTrip, RECIPE_KIND } from '../js/core/recipes.js';
+import { createRecipe, serializeRecipe, parseRecipe, roundTrip, recipeFromUrl, recipeToUrl, RECIPE_KIND } from '../js/core/recipes.js';
 import { DEFAULT_ADJUSTMENTS } from '../js/core/pixel.js';
 
 const sample = () => createRecipe('Golden Hour', { warmth: 30, saturation: 15 }, [{ id: 'warm' }, { id: 'vignette', strength: 40 }]);
