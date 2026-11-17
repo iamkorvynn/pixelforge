@@ -42,3 +42,7 @@ Import validates, in order: valid JSON → object → `kind` matches → `versio
 ## Bundled recipes
 
 `recipes/` ships 8 recipes you can import by pasting their contents into the Recipes panel: Bright & Airy, Vintage Film, Noir, Golden Hour, Moody, Arctic, Soft Skin, Poster Pop. They are also the reference examples for the format.
+
+## Sharing a recipe as a link
+
+A recipe can also travel as a URL: `?recipe=<urlencoded recipe JSON>`. Opening PixelForge with that parameter applies the recipe to the starting image automatically. Build one with `recipeToUrl(base, recipe)` (see `js/core/recipes.js`), or copy the current look and append it to the app URL yourself. Anyone opening the link gets the same look on their own image — no account, no server.
