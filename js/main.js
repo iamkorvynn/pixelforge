@@ -20,6 +20,7 @@ import { fullCrop, clampCrop, dragCrop, ASPECT_PRESETS, centredCrop } from './co
 import { getPreset, presetToRecipe } from './presets/index.js';
 import { defaultStrength } from './filters/index.js';
 import { parseRecipe, recipeFromUrl } from './core/recipes.js';
+import { saveEdit, loadEdit } from './core/persistence.js';
 
 const $ = (id) => document.getElementById(id);
 
@@ -40,7 +41,14 @@ function currentState() { return state; }
 function commit(next, label) {
   state = next;
   history.push(state);
+  persistSession();
   afterStateChange(label);
+}
+
+// Persist the session (best effort; oversized images are skipped silently).
+function persistSession() {
+  if (!state) return;
+  saveEdit(localStorage, state, editor.sourceDataUrl(), fileName);
 }
 
 function afterStateChange(label) {
@@ -83,6 +91,7 @@ function loadNewImage(img, name) {
   $('empty-state').classList.add('hidden');
   $('editor-wrap').classList.remove('hidden');
   toast(`Loaded ${name || 'image'} — ${editor.imageWidth} × ${editor.imageHeight}px`);
+  persistSession();
   // Deep link: ?recipe=<json> applies a shared look once the image is in.
   if (pendingUrlRecipe) {
     const recipe = pendingUrlRecipe;
@@ -442,5 +451,22 @@ try {
 const sampleParam = new URLSearchParams(location.search).get('sample');
 const startSample = SAMPLES.find((s) => s.url.includes(sampleParam || '___')) || SAMPLES[0];
 
-// Auto-load the first sample so the editor is never an empty grey box.
-loadSample(startSample.url, startSample.name, loadNewImage, (m) => toast(m));
+// Restore the last session if there is one (same image + edits); otherwise
+// auto-load a sample so the editor is never an empty grey box.
+const saved = loadEdit(localStorage);
+if (saved) {
+  const img = new Image();
+  img.onload = () => {
+    loadNewImage(img, saved.imageName);
+    if (saved.state && saved.state.imageWidth === editor.imageWidth && saved.state.imageHeight === editor.imageHeight) {
+      state = saved.state;
+      history.clear();
+      history.push(state);
+      afterStateChange(`Restored your last edit (${new Date(saved.savedAt).toLocaleString()})`);
+    }
+  };
+  img.onerror = () => loadSample(startSample.url, startSample.name, loadNewImage, (m) => toast(m));
+  img.src = saved.imageDataUrl;
+} else {
+  loadSample(startSample.url, startSample.name, loadNewImage, (m) => toast(m));
+}
