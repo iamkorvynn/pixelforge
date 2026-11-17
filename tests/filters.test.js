@@ -8,6 +8,11 @@ import { apply as posterize } from '../js/filters/posterize.js';
 import { apply as noir } from '../js/filters/noir.js';
 import { apply as duotone } from '../js/filters/duotone.js';
 import { apply as vintage } from '../js/filters/vintage.js';
+import { apply as solarize } from '../js/filters/solarize.js';
+import { apply as threshold } from '../js/filters/threshold.js';
+import { apply as emboss } from '../js/filters/emboss.js';
+import { apply as grain } from '../js/filters/grain.js';
+import { apply as clarity } from '../js/filters/clarity.js';
 import { makeBuffer, getPixel } from '../js/core/utils.js';
 
 test('grayscale makes every channel equal to luminance', () => {
@@ -81,4 +86,12 @@ test('vintage lifts pure black above zero (faded blacks)', () => {
   const buf = makeBuffer(1, 1, [0, 0, 0, 255]);
   const [r] = getPixel(vintage(buf), 0, 0);
   assert.ok(r > 0);
+});
+
+test('solarize flips values above the threshold and keeps the rest', () => {
+  const buf = makeBuffer(1, 1, [200, 50, 128, 255]);
+  const [r, g, b] = getPixel(solarize(buf, 128), 0, 0);
+  assert.equal(r, 55); // 255-200
+  assert.equal(g, 50); // untouched
+  assert.equal(b, 128); // at threshold, untouched
 });
