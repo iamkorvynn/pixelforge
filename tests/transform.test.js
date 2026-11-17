@@ -18,8 +18,8 @@ test('rotate90Clockwise swaps dimensions and moves pixels', () => {
   const out = rotate90Clockwise(twoByOne());
   assert.equal(out.width, 1);
   assert.equal(out.height, 2);
-  assert.deepEqual(getPixel(out, 0, 0), [0, 255, 0, 255]); // green on top
-  assert.deepEqual(getPixel(out, 0, 1), [255, 0, 0, 255]); // red below
+  assert.deepEqual(getPixel(out, 0, 0), [255, 0, 0, 255]); // red on top
+  assert.deepEqual(getPixel(out, 0, 1), [0, 255, 0, 255]); // green below
 });
 
 test('four 90-degree rotations return the original', () => {
