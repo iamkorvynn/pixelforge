@@ -54,6 +54,14 @@
 .preset-swatch-portrait-soft { background: linear-gradient(135deg, #ffd9c0, #e8a87c); }
 .preset-swatch-portrait-glow { background: linear-gradient(135deg, #fff0d6, #ffb37a); }
 .preset-swatch-portrait-dramatic { background: linear-gradient(135deg, #5a3a3a, #120a0a); }
+.preset-swatch-seasonal-autumn { background: linear-gradient(135deg, #ff8c42, #8b2e1f); }
+.preset-swatch-seasonal-winter { background: linear-gradient(135deg, #eaf6ff, #7fa8c9); }
+.preset-swatch-seasonal-spring { background: linear-gradient(135deg, #ffd6e8, #7fd08a); }
+.preset-swatch-seasonal-summer { background: linear-gradient(135deg, #fff3b0, #ff9a3d); }
+.preset-swatch-street-neon { background: linear-gradient(135deg, #ff2e88, #1a1a2e); }
+.preset-swatch-street-grit { background: linear-gradient(135deg, #8a8a8a, #222); }
+.preset-swatch-street-solar { background: linear-gradient(135deg, #00d8ff, #ff6a00); }
+.preset-swatch-street-threshold { background: linear-gradient(135deg, #fff, #000); }
 
 #filter-chips { display: flex; flex-wrap: wrap; gap: 6px; min-height: 24px; }
 .filter-empty { color: var(--text-faint); font-size: 13px; }
