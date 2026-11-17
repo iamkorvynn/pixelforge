@@ -1,7 +1,7 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
 import {
-  rotate90Clockwise, flipHorizontal, flipVertical, applyTransform,
+  rotate90Clockwise, rotateArbitrary, flipHorizontal, flipVertical, applyTransform,
   rotateTransform, isIdentityTransform, DEFAULT_TRANSFORM,
 } from '../js/core/transform.js';
 import { makeBuffer, setPixel, getPixel } from '../js/core/utils.js';
@@ -65,4 +65,40 @@ test('isIdentityTransform detects the neutral transform', () => {
   assert.equal(isIdentityTransform(DEFAULT_TRANSFORM), true);
   assert.equal(isIdentityTransform({ ...DEFAULT_TRANSFORM, flipH: true }), false);
   assert.equal(isIdentityTransform({ ...DEFAULT_TRANSFORM, rotate: 90 }), false);
+});
+
+test('rotateArbitrary by 0 is the identity', () => {
+  const buf = twoByOne();
+  const out = rotateArbitrary(buf, 0);
+  assert.equal(out.width, 2);
+  assert.equal(out.height, 1);
+  assert.deepEqual([...out.data], [...buf.data]);
+});
+
+test('rotateArbitrary by 90 swaps dimensions like rotate90Clockwise', () => {
+  const out = rotateArbitrary(twoByOne(), 90);
+  assert.equal(out.width, 1);
+  assert.equal(out.height, 2);
+});
+
+test('rotateArbitrary keeps a uniform image uniform', () => {
+  const buf = makeBuffer(20, 20, [77, 88, 99, 255]);
+  const out = rotateArbitrary(buf, 30);
+  // The centre must stay the flat colour (corners are transparent by design).
+  assert.deepEqual(getPixel(out, Math.floor(out.width / 2), Math.floor(out.height / 2)).slice(0, 3), [77, 88, 99]);
+});
+
+test('rotateArbitrary by 360 returns (nearly) the original', () => {
+  const buf = makeBuffer(6, 4, [10, 20, 30, 255]);
+  const out = rotateArbitrary(buf, 360);
+  assert.equal(out.width, 6);
+  assert.equal(out.height, 4);
+  assert.deepEqual(getPixel(out, 3, 2).slice(0, 3), [10, 20, 30]);
+});
+
+test('applyTransform honours the free straighten angle', () => {
+  const buf = makeBuffer(10, 10, [50, 60, 70, 255]);
+  const out = applyTransform(buf, { ...DEFAULT_TRANSFORM, angle: 45 });
+  assert.ok(out.width > 10 && out.height > 10, 'a 45° rotation enlarges the bounding box');
+  assert.deepEqual(getPixel(out, Math.floor(out.width / 2), Math.floor(out.height / 2)).slice(0, 3), [50, 60, 70]);
 });
