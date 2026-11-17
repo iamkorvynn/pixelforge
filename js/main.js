@@ -30,6 +30,7 @@ const editor = new Editor(canvas);
 const history = new History(50);
 let state = null; // created when an image loads
 let fileName = 'pixelforge-edit';
+let fileSize = null; // bytes, when known (uploads); samples report null
 let activePresetId = null;
 let cropAspect = 'free';
 let cropDrag = null; // { handle, startX, startY, startRect }
@@ -69,15 +70,18 @@ function updateToolbar() {
 function updateStatus(note) {
   const pipeline = state ? describePipeline(state.adjustments, state.filters) : 'No image loaded';
   $('status-pipeline').textContent = pipeline;
-  $('status-image').textContent = state ? `${state.imageWidth} × ${state.imageHeight} px` : '—';
+  $('status-image').textContent = state
+    ? `${state.imageWidth} × ${state.imageHeight} px${fileSize ? ` · ${(fileSize / 1024 / 1024).toFixed(1)} MB` : ''}`
+    : '—';
   $('status-zoom').textContent = `${editor.zoomPercent()}%`;
   if (state && editor.workBuffer) drawHistogram($('histogram-canvas'), editor.workBuffer, $('histogram-label'));
   if (note) toast(note);
 }
 
-function loadNewImage(img, name) {
+function loadNewImage(img, name, size) {
   editor.loadImage(img);
   fileName = (name || 'pixelforge-edit').replace(/\.[^.]+$/, '');
+  fileSize = typeof size === 'number' ? size : null;
   state = createState(editor.imageWidth, editor.imageHeight);
   history.clear();
   history.push(state);
@@ -366,6 +370,12 @@ canvas.addEventListener('pointermove', (e) => {
 });
 
 canvas.addEventListener('pointerup', () => { cropDrag = null; panDrag = null; compareDrag = false; });
+canvas.addEventListener('dblclick', () => {
+  if (!state) return;
+  editor.fitToView();
+  updateToolbar();
+  updateStatus();
+});
 canvas.addEventListener('wheel', (e) => {
   if (!state) return;
   e.preventDefault();
@@ -375,6 +385,18 @@ canvas.addEventListener('wheel', (e) => {
   updateToolbar();
   updateStatus();
 }, { passive: false });
+
+// Arrow keys nudge the compare divider when compare mode is on.
+document.addEventListener('keydown', (e) => {
+  if (!state || editor.compareX === null) return;
+  const tag = (e.target.tagName || '').toLowerCase();
+  if (tag === 'input' || tag === 'textarea' || tag === 'select') return;
+  if (e.key === 'ArrowLeft' || e.key === 'ArrowRight') {
+    e.preventDefault();
+    editor.compareX = Math.max(0, Math.min(1, editor.compareX + (e.key === 'ArrowRight' ? 0.02 : -0.02)));
+    editor.render(state);
+  }
+});
 
 // --- Upload & samples -----------------------------------------------------
 setupUpload({
