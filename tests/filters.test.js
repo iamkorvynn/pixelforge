@@ -95,3 +95,11 @@ test('solarize flips values above the threshold and keeps the rest', () => {
   assert.equal(g, 50); // untouched
   assert.equal(b, 128); // at threshold, untouched
 });
+
+test('threshold outputs only pure black or pure white', () => {
+  const buf = makeBuffer(2, 1, [200, 200, 200, 255]);
+  buf.data[4] = 30; buf.data[5] = 30; buf.data[6] = 30;
+  const out = threshold(buf, 128);
+  assert.deepEqual(getPixel(out, 0, 0), [255, 255, 255, 255]);
+  assert.deepEqual(getPixel(out, 1, 0), [0, 0, 0, 255]);
+});
