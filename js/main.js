@@ -3,6 +3,7 @@
 import { Editor } from './ui/editor.js';
 import { toast } from './ui/toast.js';
 import { setupUpload, loadSample } from './ui/upload.js';
+import { drawHistogram } from './ui/histogram.js';
 import { buildTransformPanel } from './ui/transformPanel.js';
 import { buildSliders, syncSliders } from './ui/sliders.js';
 import { buildPresetStrip, markActivePreset, renderFilterChips, buildFilterGrid } from './ui/presetsPanel.js';
@@ -61,6 +62,7 @@ function updateStatus(note) {
   $('status-pipeline').textContent = pipeline;
   $('status-image').textContent = state ? `${state.imageWidth} × ${state.imageHeight} px` : '—';
   $('status-zoom').textContent = `${editor.zoomPercent()}%`;
+  if (state && editor.workBuffer) drawHistogram($('histogram-canvas'), editor.workBuffer, $('histogram-label'));
   if (note) toast(note);
 }
 
